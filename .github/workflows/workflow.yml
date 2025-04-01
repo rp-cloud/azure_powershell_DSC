@@ -23,9 +23,18 @@ jobs:
       run: |
         Install-Module -Name PSDesiredStateConfiguration -Force -SkipPublisherCheck
 
+    - name: Install nx Module for DSC (Linux Configuration)
+      shell: pwsh
+      run: |
+        # Instalowanie modułu nx
+        Install-Module -Name nx -Force -SkipPublisherCheck
+        # Weryfikacja instalacji
+        Get-Module -ListAvailable nx
+
     - name: Compile DSC Configuration
       shell: pwsh
       run: |
+        Import-DscResource -ModuleName nx
         ./PowerShell/nginx.ps1
 
     - name: Azure Login via Entra ID
