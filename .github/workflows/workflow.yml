@@ -26,7 +26,7 @@ jobs:
     - name: Compile DSC Configuration
       shell: pwsh
       run: |
-        .\PoweShell\nginx.ps1
+        ./PowerShell/nginx.ps1
 
     - name: Azure Login via Entra ID
       uses: azure/login@v1
@@ -50,6 +50,6 @@ jobs:
     - name: Create and Assign Azure Policy for DSC
       shell: pwsh
       run: |
-        $policyScript = ".\PowerShell\policy.ps1"
+        $policyScript = "./PowerShell/policy.ps1"
         pwsh -File $policyScript
 
