@@ -1,11 +1,11 @@
 # Definiujemy zmienne
 $policyName = "ApplyDSCPolicy"
 $policyDisplayName = "Apply DSC Configuration from Azure Storage"
-$storageAccountName = "mystorageaccount"
+$storageAccountName = "githubrepobackupstorage"
 $containerName = "dscconfigs"
 $blobName = "InstallNginx.mof"
-$resourceGroup = "myResourceGroup"
-$subscriptionId = "xxxx-xxxx-xxxx-xxxx"
+$resourceGroup = "monitoring-RG-Linux"
+$subscriptionId = "275da9d4-fda5-4693-aa9d-f77ed05f7ef3"
 
 # Tworzymy definicję polisy
 $policyDefinition = @{
