@@ -24,22 +24,20 @@ jobs:
     - name: Compile DSC Configuration
       shell: pwsh
       run: |
-        .\InstallNginx.ps1
+        .\PoweShell\nginx.ps1
 
     - name: Azure Login via Entra ID
       uses: azure/login@v1
       with:
-        client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: Upload MOF to Azure Storage
       shell: pwsh
       run: |
-        $storageAccountName = "mystorageaccount"
+        $storageAccountName = "githubrepobackupstorage"
         $containerName = "dscconfigs"
         $blobName = "InstallNginx.mof"
-        $localFilePath = ".\InstallNginx\localhost.mof"
+        $localFilePath = ".\PowerShell\localhost.mof"
 
         # Pobierz Storage Context z Entra ID
         $storageContext = New-AzStorageContext -StorageAccountName $storageAccountName -UseConnectedAccount
@@ -50,6 +48,6 @@ jobs:
     - name: Create and Assign Azure Policy for DSC
       shell: pwsh
       run: |
-        $policyScript = "./CreateDSCPolicy.ps1"
+        $policyScript = ".\PowerShell\policy.ps1"
         pwsh -File $policyScript
 
