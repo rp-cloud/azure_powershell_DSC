@@ -1,0 +1,55 @@
+name: Build and Upload DSC MOF
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write
+
+jobs:
+  build-and-upload:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Install PowerShell DSC Module
+      shell: pwsh
+      run: |
+        Install-Module -Name PSDesiredStateConfiguration -Force -SkipPublisherCheck
+
+    - name: Compile DSC Configuration
+      shell: pwsh
+      run: |
+        .\InstallNginx.ps1
+
+    - name: Azure Login via Entra ID
+      uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    - name: Upload MOF to Azure Storage
+      shell: pwsh
+      run: |
+        $storageAccountName = "mystorageaccount"
+        $containerName = "dscconfigs"
+        $blobName = "InstallNginx.mof"
+        $localFilePath = ".\InstallNginx\localhost.mof"
+
+        # Pobierz Storage Context z Entra ID
+        $storageContext = New-AzStorageContext -StorageAccountName $storageAccountName -UseConnectedAccount
+
+        # Przesłanie pliku MOF do Storage Account
+        Set-AzStorageBlobContent -File $localFilePath -Container $containerName -Blob $blobName -Context $storageContext -Force
+
+    - name: Create and Assign Azure Policy for DSC
+      shell: pwsh
+      run: |
+        $policyScript = "./CreateDSCPolicy.ps1"
+        pwsh -File $policyScript
+
