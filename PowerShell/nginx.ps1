@@ -1,8 +1,9 @@
 Configuration InstallNginx {
     Import-DscResource -ModuleName PSDesiredStateConfiguration
+    Import-DSCResource -ModuleName nx
 
     Node "localhost" {
-        Package Nginx {
+        nxPackage Nginx {
             Ensure = "Present"
             Name = "nginx"
             Path = "/usr/bin/nginx"   # <-- Poprawiona ścieżka do binarki Nginx
@@ -17,3 +18,5 @@ Configuration InstallNginx {
         }
     }
 }
+
+InstallNginx
